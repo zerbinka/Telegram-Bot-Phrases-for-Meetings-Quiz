@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="52ad32ac-c9d8-4aa4-b823-8768a7b0ee37" name="Changes" comment="deployment 21.08.2024 - version 1">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="52ad32ac-c9d8-4aa4-b823-8768a7b0ee37" name="Changes" comment="deployment 21.08.2024 - version 2" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -57,7 +55,7 @@
       <updated>1724154287809</updated>
       <workItem from="1724154288264" duration="27586000" />
       <workItem from="1724247193714" duration="2089000" />
-      <workItem from="1724249332183" duration="2191000" />
+      <workItem from="1724249332183" duration="2546000" />
     </task>
     <task id="LOCAL-00001" summary="deployment 21.08.2024 - version 1">
       <option name="closed" value="true" />
@@ -75,7 +73,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724239213339</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="deployment 21.08.2024 - version 2">
+      <option name="closed" value="true" />
+      <created>1724251625162</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1724251625162</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -83,9 +89,10 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="deployment 21.08.2024 - version 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="deployment 21.08.2024 - version 1" />
+    <MESSAGE value="deployment 21.08.2024 - version 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="deployment 21.08.2024 - version 2" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Telegram_Bot_1$main.coverage" NAME="main Coverage Results" MODIFIED="1724251166628" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Telegram_Bot_1$main.coverage" NAME="main Coverage Results" MODIFIED="1724251863948" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

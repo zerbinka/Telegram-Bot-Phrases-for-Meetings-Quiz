@@ -56,18 +56,18 @@ questions = [
         "answer": 2
     },
     {
-        "question": "8. Before we finish the meeting, let’s take a moment to ________________________ the key points and action items to ensure everyone is on the same page.",
+        "question": "8. Before we finish the meeting, let’s take a moment to ________________________ the key points.",
         "options": ["transform", "agree", "recap", "discuss"],
         "answer": 2
     },
     {
-        "question": "9. I’d like to _________________________ a potential issue with the project timeline that we need to address before moving forward.",
+        "question": "9. I’d like to _________________________ a potential project issue that we need to address.",
         "options": ["resolve", "come up with", "suggest", "bring up"],
         "answer": 3
     },
     {
-        "question": "10. If this idea seems ____________________, we could set up a meeting next week to discuss the details further.",
-        "options": ["urgent", "unclear", "reasonable", "worth"],
+        "question": "10. If this idea seems __________, we could set up a meeting next week to discuss details.",
+        "options": ["urgent", "vague", "reasonable", "worth"],
         "answer": 2
     },
     {
@@ -96,7 +96,7 @@ questions = [
         "answer": 0
     },
     {
-        "question": "16. It might be ______________ exploring a hybrid work model to improve team productivity and satisfaction.",
+        "question": "16. It might be ___________ considering a hybrid work model to improve team productivity.",
         "options": ["challenging", "not necessary", "worth", "risky"],
         "answer": 2
     },
@@ -111,7 +111,7 @@ questions = [
         "answer": 1
     },
     {
-        "question": "19. I think we are getting ______________________ with our discussion; let’s refocus on the main agenda items to stay on schedule.",
+        "question": "19. Seems we are getting _____________ with our discussion; let’s focus on the main agenda items.",
         "options": ["ahead", "on", "ready", "off track"],
         "answer": 3
     },
@@ -128,7 +128,8 @@ user_scores = {}
 # Welcome message handler
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, "Welcome to the Phrases for Meetings Quiz! It's a quick multiple-choice test which consists of 20 questions in total. If you're up for it, let's give it a go!")
+    bot.send_message(message.chat.id, "Welcome to the Phrases for Meetings Quiz!")
+    bot.send_message(message.chat.id, "It's a quick multiple-choice test which consists of 20 questions in total. If you're up for it, let's give it a go!")
     bot.send_message(message.chat.id, "Type /quiz to begin the test. 💪")
 
 # Quiz command handler
@@ -140,24 +141,33 @@ def start_quiz(message):
 
 # Function to ask the current question
 def ask_question(chat_id):
-    # Retrieve the user's current question index
-    current_question_index = user_scores[chat_id]["current_question"]
+    try:
+        logger.info(f"Asking question for user {chat_id}")
+        # Retrieve the user's current question index
+        current_question_index = user_scores[chat_id]["current_question"]
+        logger.info(f"Current question index for user {chat_id}: {current_question_index}")
 
-    # Ensure index is valid
-    if current_question_index >= len(questions):
-        logger.error("Invalid question index: %d", current_question_index)
-        bot.send_message(chat_id, "The quiz has finished or an error occurred.")
-        return
+        # Ensure index is valid
+        if current_question_index >= len(questions):
+            logger.error(f"Invalid question index for user {chat_id}: {current_question_index}")
+            bot.send_message(chat_id, "The quiz has finished or an error occurred.")
+            return
 
-    question_data = questions[current_question_index]
-    question_text = question_data["question"]
+        question_data = questions[current_question_index]
+        question_text = question_data["question"]
 
-    # Create inline keyboard for options
-    markup = types.InlineKeyboardMarkup()
-    for i, option in enumerate(question_data["options"]):
-        markup.add(types.InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
+        # Create inline keyboard for options
+        markup = types.InlineKeyboardMarkup()
+        for i, option in enumerate(question_data["options"]):
+            markup.add(types.InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
 
-    bot.send_message(chat_id, question_text, reply_markup=markup)
+        logger.info(f"Sending question to user {chat_id}: {question_text}")
+        bot.send_message(chat_id, question_text, reply_markup=markup)
+
+    except Exception as e:
+        logger.error(f"Error in ask_question for user {chat_id}: {e}", exc_info=True)
+        bot.send_message(chat_id, "An error occurred while asking the question.")
+
 
 # Handle button press (answer selection)
 @bot.callback_query_handler(func=lambda call: True)
