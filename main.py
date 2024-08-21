@@ -21,7 +21,7 @@ bot = telebot.TeleBot('7509477294:AAHu-OMUrKLX-JZhRdIv5z9-wosrwJck51A')
 # List of questions and answers
 questions = [
     {
-        "question": "1. I’ll send out the meeting __________________ after the meeting.",
+        "question": "1. I’ll send out the meeting ________________ after the meeting.",
         "options": ["minutes", "invitation", "agenda", "reminder"],
         "answer": 0
     },
