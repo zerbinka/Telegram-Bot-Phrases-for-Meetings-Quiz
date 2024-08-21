@@ -180,9 +180,9 @@ def handle_query(call):
             # Quiz is finished, send the final score message
             score = user_data['score']
             if score >= 15:
-                final_message = f"Well done! You've done a great job! You finished the quiz with a score of {score}/{len(questions)}. Thanks for your participation."
+                final_message = f"Well done!🥳 You've done a great job! You finished the quiz with a score of {score}/{len(questions)}. Thanks for your participation."
             else:
-                final_message = f"Nice effort! Keep going and you'll get there! You finished the quiz with a score of {score}/{len(questions)}. If you want to improve your score, try doing it again. Thanks for your participation."
+                final_message = f"Nice effort!👌 Keep going and you'll get there! You finished the quiz with a score of {score}/{len(questions)}. If you want to improve your score, try doing it again. Thanks for your participation."
 
             bot.send_message(chat_id, final_message)
             # Debugging output to ensure score is tracked correctly
