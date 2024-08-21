@@ -1,6 +1,7 @@
 import telebot
 import os
 import logging
+from telebot import types
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -19,15 +20,110 @@ bot = telebot.TeleBot('7509477294:AAHu-OMUrKLX-JZhRdIv5z9-wosrwJck51A')
 
 # List of questions and answers
 questions = [
-    # ... (your list of questions and answers)
+    {
+        "question": "1. I’ll send out the meeting __________________ after the meeting.",
+        "options": ["minutes", "invitation", "agenda", "reminder"],
+        "answer": 0
+    },
+    {
+        "question": "2. Please make sure to ___________________ on your action items.",
+        "options": ["check", "not ignore", "follow up", "start"],
+        "answer": 2
+    },
+    {
+        "question": "3. We’re running out of time, so let’s ________________________.",
+        "options": ["pause", "extend", "review", "move on"],
+        "answer": 3
+    },
+    {
+        "question": "4. I appreciate everyone’s ______________________.",
+        "options": ["contributions", "feedbacks", "words", "presents"],
+        "answer": 0
+    },
+    {
+        "question": "5. Any final thoughts before we ________________________?",
+        "options": ["get on", "come up", "wrap up", "keep on"],
+        "answer": 2
+    },
+    {
+        "question": "6. Have there been any issues or ___________________ affecting the work?",
+        "options": ["updates", "roadblocks", "objections", "meetings"],
+        "answer": 1
+    },
+    {
+        "question": "7. I’m going to send you a ___________________ email after the meeting.",
+        "options": ["reminder", "thank-you", "follow-up", "confirming"],
+        "answer": 2
+    },
+    {
+        "question": "8. Before we finish the meeting, let’s take a moment to ________________________ the key points and action items to ensure everyone is on the same page.",
+        "options": ["transform", "agree", "recap", "discuss"],
+        "answer": 2
+    },
+    {
+        "question": "9. I’d like to _________________________ a potential issue with the project timeline that we need to address before moving forward.",
+        "options": ["resolve", "come up with", "suggest", "bring up"],
+        "answer": 3
+    },
+    {
+        "question": "10. If this idea seems ____________________, we could set up a meeting next week to discuss the details further.",
+        "options": ["urgent", "unclear", "reasonable", "worth"],
+        "answer": 2
+    },
+    {
+        "question": "11. Are we _____________________ to meet the upcoming deadlines?",
+        "options": ["willing", "ahead", "ready", "on track"],
+        "answer": 3
+    },
+    {
+        "question": "12. I wanted _____________________ you on where we stand with the deliverables.",
+        "options": ["to update", "to discuss with", "to inform", "to notify"],
+        "answer": 0
+    },
+    {
+        "question": "13. I understand your ___________________ , but let’s consider...",
+        "options": ["updates", "concerns", "prospective", "prospects"],
+        "answer": 1
+    },
+    {
+        "question": "14. I’ve made significant progress on this task and am ___________________ completion.",
+        "options": ["nearing", "beginning", "starting", "closing"],
+        "answer": 0
+    },
+    {
+        "question": "15. Let’s _____________________ the potential downsides.",
+        "options": ["address", "ignore", "delay", "avoid"],
+        "answer": 0
+    },
+    {
+        "question": "16. It might be ______________ exploring a hybrid work model to improve team productivity and satisfaction.",
+        "options": ["challenging", "not necessary", "worth", "risky"],
+        "answer": 2
+    },
+    {
+        "question": "17. Please confirm who will __________________ each action item.",
+        "options": ["handle", "deal", "postpone", "cope"],
+        "answer": 0
+    },
+    {
+        "question": "18. Feel free to ____________________ if you have further questions.",
+        "options": ["contact", "reach out", "ask", "join me"],
+        "answer": 1
+    },
+    {
+        "question": "19. I think we are getting ______________________ with our discussion; let’s refocus on the main agenda items to stay on schedule.",
+        "options": ["ahead", "on", "ready", "off track"],
+        "answer": 3
+    },
+    {
+        "question": "20. Please _________________ us while we sort out these connection issues.",
+        "options": ["help", "wait for", "bear with", "contact"],
+        "answer": 2
+    }
 ]
 
 # Dictionary to store user progress and scores
 user_scores = {}
-
-# Set up logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Welcome message handler
 @bot.message_handler(commands=['start'])
@@ -46,13 +142,20 @@ def start_quiz(message):
 def ask_question(chat_id):
     # Retrieve the user's current question index
     current_question_index = user_scores[chat_id]["current_question"]
+
+    # Ensure index is valid
+    if current_question_index >= len(questions):
+        logger.error("Invalid question index: %d", current_question_index)
+        bot.send_message(chat_id, "The quiz has finished or an error occurred.")
+        return
+
     question_data = questions[current_question_index]
     question_text = question_data["question"]
 
     # Create inline keyboard for options
-    markup = InlineKeyboardMarkup()
+    markup = types.InlineKeyboardMarkup()
     for i, option in enumerate(question_data["options"]):
-        markup.add(InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
+        markup.add(types.InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
 
     bot.send_message(chat_id, question_text, reply_markup=markup)
 
@@ -105,7 +208,7 @@ def handle_query(call):
         user_scores[chat_id] = user_data
     except Exception as e:
         bot.send_message(chat_id, "An error occurred while processing your request.")
-        logger.error(f"Error handling callback: {e}")
+        logger.error(f"Error handling callback: {e}", exc_info=True)
 
 # Start polling for updates
 logger.info("Starting bot polling...")
