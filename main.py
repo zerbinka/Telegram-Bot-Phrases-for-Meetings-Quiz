@@ -36,7 +36,7 @@ questions = [
         "answer": 3
     },
     {
-        "question": "4. I appreciate everyone’s ______________________.",
+        "question": "4. We're done for today, guys. Thank you! I appreciate everyone’s ______________________.",
         "options": ["contributions", "feedbacks", "words", "presents"],
         "answer": 0
     },
@@ -62,12 +62,12 @@ questions = [
     },
     {
         "question": "9. I’d like to _________________________ a potential project issue that we need to address.",
-        "options": ["resolve", "come up with", "suggest", "bring up"],
+        "options": ["resolve", "come with", "see", "bring up"],
         "answer": 3
     },
     {
-        "question": "10. If this idea seems __________, we could set up a meeting next week to discuss details.",
-        "options": ["urgent", "vague", "reasonable", "worth"],
+        "question": "10. If this idea sounds __________, we could set up a meeting next week to discuss details.",
+        "options": ["urgent", "worrying", "reasonable", "worth"],
         "answer": 2
     },
     {
@@ -77,7 +77,7 @@ questions = [
     },
     {
         "question": "12. I wanted _____________________ you on where we stand with the deliverables.",
-        "options": ["to update", "to discuss with", "to inform", "to notify"],
+        "options": ["to update", "to discuss", "to inform", "to notify"],
         "answer": 0
     },
     {
@@ -111,7 +111,7 @@ questions = [
         "answer": 1
     },
     {
-        "question": "19. Seems we are getting _____________ with our discussion; let’s focus on the main agenda items.",
+        "question": "19. Seems we are getting _____________ with our discussion; Guys, let’s focus on the main agenda items.",
         "options": ["ahead", "on", "ready", "off track"],
         "answer": 3
     },
@@ -120,6 +120,30 @@ questions = [
         "options": ["help", "wait for", "bear with", "contact"],
         "answer": 2
     }
+]
+
+# List of correct answers (you can add this directly after the questions list)
+correct_answers = [
+    "1. I’ll send out the meeting **minutes** after the meeting.",
+    "2. Please make sure to **follow up** on your action items.",
+    "3. We’re running out of time, so let’s **move on**.",
+    "4. We're done for today, guys. Thank you! I appreciate everyone’s **contributions**.",
+    "5. Any final thoughts before we **wrap up**?",
+    "6. Have there been any issues or **roadblocks** affecting the work?",
+    "7. I’m going to send you a **follow-up** email after the meeting.",
+    "8. Before we finish the meeting, let’s take a moment to **recap** the key points.",
+    "9. I’d like to **bring up** a potential project issue that we need to address.",
+    "10. If this idea sounds **reasonable**, we could set up a meeting next week to discuss details.",
+    "11. Are we **on track** to meet the upcoming deadlines?",
+    "12. I wanted **to update** you on where we stand with the deliverables.",
+    "13. I understand your **concerns**, but let’s consider...",
+    "14. I’ve made significant progress on this task and am **nearing** completion.",
+    "15. Let’s **address** the potential downsides.",
+    "16. It might be **worth** considering a hybrid work model to improve team productivity.",
+    "17. Please confirm who will **handle** each action item.",
+    "18. Feel free to **reach out** if you have further questions.",
+    "19. Seems we are getting **off track** with our discussion; Guys, let’s focus on the main agenda items.",
+    "20. Please **bear with** us while we sort out these connection issues."
 ]
 
 # Dictionary to store user progress and scores
@@ -135,19 +159,16 @@ def start(message):
 # Quiz command handler
 @bot.message_handler(commands=['quiz'])
 def start_quiz(message):
-    # Initialize the user's score, question index, and answered questions
     user_scores[message.chat.id] = {"score": 0, "current_question": 0, "answered_questions": set()}
-    ask_question(message.chat.id)  # Start with the first question
+    ask_question(message.chat.id)
 
 # Function to ask the current question
 def ask_question(chat_id):
     try:
         logger.info(f"Asking question for user {chat_id}")
-        # Retrieve the user's current question index
         current_question_index = user_scores[chat_id]["current_question"]
         logger.info(f"Current question index for user {chat_id}: {current_question_index}")
 
-        # Ensure index is valid
         if current_question_index >= len(questions):
             logger.error(f"Invalid question index for user {chat_id}: {current_question_index}")
             bot.send_message(chat_id, "The quiz has finished or an error occurred.")
@@ -156,7 +177,6 @@ def ask_question(chat_id):
         question_data = questions[current_question_index]
         question_text = question_data["question"]
 
-        # Create inline keyboard for options
         markup = types.InlineKeyboardMarkup()
         for i, option in enumerate(question_data["options"]):
             markup.add(types.InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
@@ -168,7 +188,6 @@ def ask_question(chat_id):
         logger.error(f"Error in ask_question for user {chat_id}: {e}", exc_info=True)
         bot.send_message(chat_id, "An error occurred while asking the question.")
 
-
 # Handle button press (answer selection)
 @bot.callback_query_handler(func=lambda call: True)
 def handle_query(call):
@@ -176,15 +195,12 @@ def handle_query(call):
     try:
         question_index, selected_option = map(int, call.data.split(','))
 
-        # Retrieve user data
         user_data = user_scores.get(chat_id, {"score": 0, "current_question": 0, "answered_questions": set()})
 
-        # Check if the user has already answered this question
         if question_index in user_data["answered_questions"]:
             bot.send_message(chat_id, "You've already answered this question. Please answer the next question.")
             return
 
-        # Check if the answer is correct and update the user's score
         correct_answer = questions[question_index]["answer"]
         if selected_option == correct_answer:
             bot.send_message(chat_id, "Correct! 🎉")
@@ -192,18 +208,13 @@ def handle_query(call):
         else:
             bot.send_message(chat_id, "Oops, that's not right. 😔")
 
-        # Mark this question as answered
         user_data["answered_questions"].add(question_index)
-
-        # Move to the next question
         user_data["current_question"] += 1
 
-        # Check if there are more questions
         if user_data["current_question"] < len(questions):
-            user_scores[chat_id] = user_data  # Update user data
-            ask_question(chat_id)  # Ask the next question
+            user_scores[chat_id] = user_data
+            ask_question(chat_id)
         else:
-            # Quiz is finished, send the final score message
             score = user_data['score']
             if score >= 15:
                 final_message = f"Well done!🥳 You've done a great job! You finished the quiz with a score of {score}/{len(questions)}. Thanks for your participation."
@@ -211,14 +222,35 @@ def handle_query(call):
                 final_message = f"Nice effort!👌 Keep going and you'll get there! You finished the quiz with a score of {score}/{len(questions)}. If you want to improve your score, try doing it again. Thanks for your participation."
 
             bot.send_message(chat_id, final_message)
-            # Debugging output to ensure score is tracked correctly
+            send_correct_answers(chat_id)
             logger.info(f"User {chat_id} finished the quiz with a score of {score}")
 
-        # Update the user data after processing
         user_scores[chat_id] = user_data
     except Exception as e:
         bot.send_message(chat_id, "An error occurred while processing your request.")
         logger.error(f"Error handling callback: {e}", exc_info=True)
+
+# Function to send the correct answers to the user
+def send_correct_answers(chat_id):
+    try:
+        # Simplify the message for initial testing
+        summary = "Here are the correct answers to all the questions:\n\n"
+        for answer in correct_answers:
+            summary += f"{answer}\n\n"
+
+        # Test sending a simple message without MarkdownV2
+        bot.send_message(chat_id, summary, parse_mode=None)
+
+        # Log success
+        logger.info(f"Successfully sent correct answers to user {chat_id}")
+
+    except telebot.apihelper.ApiException as api_error:
+        logger.error(f"API exception occurred while sending correct answers to user {chat_id}: {api_error}", exc_info=True)
+        bot.send_message(chat_id, "An error occurred while sending the correct answers. Please try again later.")
+
+    except Exception as e:
+        logger.error(f"Unexpected error occurred while sending correct answers to user {chat_id}: {e}", exc_info=True)
+        bot.send_message(chat_id, "An unexpected error occurred. Please try again later.")
 
 # Start polling for updates
 logger.info("Starting bot polling...")
