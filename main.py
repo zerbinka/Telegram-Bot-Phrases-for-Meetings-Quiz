@@ -164,29 +164,21 @@ def start_quiz(message):
 
 # Function to ask the current question
 def ask_question(chat_id):
-    try:
-        logger.info(f"Asking question for user {chat_id}")
-        current_question_index = user_scores[chat_id]["current_question"]
-        logger.info(f"Current question index for user {chat_id}: {current_question_index}")
+    user_data = user_scores[chat_id]
+    current_question_index = user_data["current_question"]
 
-        if current_question_index >= len(questions):
-            logger.error(f"Invalid question index for user {chat_id}: {current_question_index}")
-            bot.send_message(chat_id, "The quiz has finished or an error occurred.")
-            return
+    if current_question_index >= len(questions):
+        bot.send_message(chat_id, "The quiz has finished or an error occurred.")
+        return
 
-        question_data = questions[current_question_index]
-        question_text = question_data["question"]
+    question_data = questions[current_question_index]
+    question_text = question_data["question"]
 
-        markup = types.InlineKeyboardMarkup()
-        for i, option in enumerate(question_data["options"]):
-            markup.add(types.InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
+    markup = types.InlineKeyboardMarkup()
+    for i, option in enumerate(question_data["options"]):
+        markup.add(types.InlineKeyboardButton(option, callback_data=f"{current_question_index},{i}"))
 
-        logger.info(f"Sending question to user {chat_id}: {question_text}")
-        bot.send_message(chat_id, question_text, reply_markup=markup)
-
-    except Exception as e:
-        logger.error(f"Error in ask_question for user {chat_id}: {e}", exc_info=True)
-        bot.send_message(chat_id, "An error occurred while asking the question.")
+    bot.send_message(chat_id, question_text, reply_markup=markup)
 
 # Handle button press (answer selection)
 @bot.callback_query_handler(func=lambda call: True)
@@ -222,7 +214,7 @@ def handle_query(call):
                 final_message = f"Nice effort!👌 Keep going and you'll get there! You finished the quiz with a score of {score}/{len(questions)}. If you want to improve your score, try doing it again. Thanks for your participation."
 
             bot.send_message(chat_id, final_message)
-            send_correct_answers(chat_id)
+            bot.send_message(chat_id, "If you want to see the list of correct answers, press /keys")
             logger.info(f"User {chat_id} finished the quiz with a score of {score}")
 
         user_scores[chat_id] = user_data
@@ -233,15 +225,11 @@ def handle_query(call):
 # Function to send the correct answers to the user
 def send_correct_answers(chat_id):
     try:
-        # Simplify the message for initial testing
         summary = "Here are the correct answers to all the questions:\n\n"
         for answer in correct_answers:
             summary += f"{answer}\n\n"
 
-        # Test sending a simple message without MarkdownV2
         bot.send_message(chat_id, summary, parse_mode=None)
-
-        # Log success
         logger.info(f"Successfully sent correct answers to user {chat_id}")
 
     except telebot.apihelper.ApiException as api_error:
@@ -251,6 +239,14 @@ def send_correct_answers(chat_id):
     except Exception as e:
         logger.error(f"Unexpected error occurred while sending correct answers to user {chat_id}: {e}", exc_info=True)
         bot.send_message(chat_id, "An unexpected error occurred. Please try again later.")
+
+# Handler for /keys command
+@bot.message_handler(commands=['keys'])
+def keys_command(message):
+    if message.chat.id in user_scores:
+        send_correct_answers(message.chat.id)
+    else:
+        bot.send_message(message.chat.id, "You need to complete the quiz first to see the correct answers.")
 
 # Start polling for updates
 logger.info("Starting bot polling...")
