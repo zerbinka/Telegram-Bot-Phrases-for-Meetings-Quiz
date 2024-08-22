@@ -211,7 +211,7 @@ def handle_query(call):
             if score >= 15:
                 final_message = f"Well done!🥳 You've done a great job! You finished the quiz with a score of {score}/{len(questions)}. Thanks for your participation."
             else:
-                final_message = f"Nice effort!👌 Keep going and you'll get there! You finished the quiz with a score of {score}/{len(questions)}. If you want to improve your score, try doing it again. Thanks for your participation."
+                final_message = f"Nice effort!👌 Keep going and you'll get there! You finished the quiz with a score of {score}/{len(questions)}. If you want to improve your score, just give it another go. Thanks for your participation."
 
             bot.send_message(chat_id, final_message)
             bot.send_message(chat_id, "If you want to see the list of correct answers, press /keys")
